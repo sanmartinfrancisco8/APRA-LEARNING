@@ -1,9 +1,8 @@
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './src/lib/prisma';
 
-const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
 async function startServer() {
@@ -17,14 +16,22 @@ async function startServer() {
   // Health Check
   app.get('/api/health', async (req, res) => {
     try {
-      await prisma.$queryRaw`SELECT 1`;
-      res.json({ status: 'ok', database: 'connected', version: '1.0.0' });
-    } catch (e) {
-      res.status(500).json({ status: 'error', database: 'disconnected' });
+        await prisma.$queryRaw`SELECT 1`;
+        res.json({ status: 'ok', version: '1.0.0', database: 'connected' });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Database connection failed' });
     }
   });
 
-  // Example: Auth Module Stub
+  // Example: Users Module
+  app.get('/api/users', async (req, res) => {
+    try {
+        const users = await prisma.user.findMany();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+  });
   app.post('/api/auth/login', (req, res) => {
     res.json({ token: 'mock-jwt-token', user: { id: 1, role: 'ADMIN' } });
   });
