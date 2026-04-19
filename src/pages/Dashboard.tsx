@@ -1,27 +1,46 @@
-import { Users, BookOpen, GraduationCap, Clock } from "lucide-react";
+import { Users, BookOpen, GraduationCap, Clock, FileWarning, Award } from "lucide-react";
+import { useAuthStore } from "../store/auth";
 
 export function Dashboard() {
+  const { user } = useAuthStore();
+  const isStudent = user?.role === 'STUDENT';
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-            Resumen Académico
+            {isStudent ? 'Mi Resumen Académico' : 'Resumen Académico'}
             <div className="h-px flex-1 bg-gradient-to-r from-blue-400/50 to-emerald-400/50 ml-4 opacity-50" />
           </h1>
-          <p className="text-gray-300 text-sm mt-1">Monitorea el progreso de APRA Learning Systems</p>
+          <p className="text-gray-300 text-sm mt-1">
+             {isStudent ? 'Sigue tu progreso y actividades pendientes' : 'Monitorea el progreso de APRA Learning Systems'}
+          </p>
         </div>
-        <button className="px-5 py-2.5 bg-emerald-600 text-white rounded-md text-sm font-medium hover:bg-emerald-500 transition-all shadow-[0_0_15px_rgba(52,211,153,0.4)] border border-emerald-500 focus:ring-2 focus:ring-emerald-500/50 focus:outline-none">
-          Crear Nuevo Curso
-        </button>
+        {!isStudent && (
+          <button className="px-5 py-2.5 bg-emerald-600 text-white rounded-md text-sm font-medium hover:bg-emerald-500 transition-all shadow-[0_0_15px_rgba(52,211,153,0.4)] border border-emerald-500 focus:ring-2 focus:ring-emerald-500/50 focus:outline-none">
+            Crear Nuevo Curso
+          </button>
+        )}
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <KPICard title="Cursos Activos" value="24" icon={<BookOpen size={20} />} trend="+3 este mes" color="blue" />
-        <KPICard title="Estudiantes" value="1,842" icon={<Users size={20} />} trend="+124 este mes" color="green" />
-        <KPICard title="Docentes" value="86" icon={<GraduationCap size={20} />} trend="Estable" neutral color="red" />
-        <KPICard title="Horas de Clase" value="4,200" icon={<Clock size={20} />} trend="+8% vs pasado" color="blue" />
+        {isStudent ? (
+          <>
+            <KPICard title="Cursos Inscritos" value="4" icon={<BookOpen size={20} />} trend="Semestre 1" color="blue" />
+            <KPICard title="Entregas Pendientes" value="2" icon={<FileWarning size={20} />} trend="Próxima mañana" color="red" />
+            <KPICard title="Horas de Estudio" value="126" icon={<Clock size={20} />} trend="+12 este mes" color="green" />
+            <KPICard title="Promedio General" value="92%" icon={<Award size={20} />} trend="Excelente" color="blue" />
+          </>
+        ) : (
+          <>
+            <KPICard title="Cursos Activos" value="24" icon={<BookOpen size={20} />} trend="+3 este mes" color="blue" />
+            <KPICard title="Estudiantes" value="1,842" icon={<Users size={20} />} trend="+124 este mes" color="green" />
+            <KPICard title="Docentes" value="86" icon={<GraduationCap size={20} />} trend="Estable" neutral color="red" />
+            <KPICard title="Horas de Clase" value="4,200" icon={<Clock size={20} />} trend="+8% vs pasado" color="blue" />
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -32,13 +51,23 @@ export function Dashboard() {
           
           <h2 className="text-lg font-semibold text-white mb-6 flex items-center relative z-10">
             <span className="w-1.5 h-6 bg-emerald-400 rounded-full mr-3 shadow-[0_0_10px_rgba(52,211,153,0.5)]"></span>
-            Cursos Recientes
+            {isStudent ? 'Mis Cursos Recientes' : 'Cursos Recientes'}
           </h2>
           <div className="space-y-4 relative z-10">
-            <CourseRow title="Arquitectura Cloud Enterprise" students={145} progress={80} />
-            <CourseRow title="Liderazgo y Gestión de Equipos" students={89} progress={45} />
-            <CourseRow title="Introducción a Machine Learning" students={210} progress={15} />
-            <CourseRow title="Seguridad Informática Nivel 1" students={67} progress={98} />
+            {isStudent ? (
+              <>
+                <CourseRow title="Arquitectura Cloud Enterprise" text_secondary="Prof. Andrea Gómez" progress={80} />
+                <CourseRow title="Liderazgo y Gestión de Equipos" text_secondary="Prof. Jorge Martínez" progress={45} />
+                <CourseRow title="Introducción a Machine Learning" text_secondary="Prof. Andrea Gómez" progress={15} />
+              </>
+            ) : (
+              <>
+                <CourseRow title="Arquitectura Cloud Enterprise" text_secondary="145 estudiantes inscritos" progress={80} />
+                <CourseRow title="Liderazgo y Gestión de Equipos" text_secondary="89 estudiantes inscritos" progress={45} />
+                <CourseRow title="Introducción a Machine Learning" text_secondary="210 estudiantes inscritos" progress={15} />
+                <CourseRow title="Seguridad Informática Nivel 1" text_secondary="67 estudiantes inscritos" progress={98} />
+              </>
+            )}
           </div>
         </div>
 
@@ -48,13 +77,23 @@ export function Dashboard() {
           
           <h2 className="text-lg font-semibold text-white mb-6 flex items-center relative z-10">
              <span className="w-1.5 h-6 bg-blue-400 rounded-full mr-3 shadow-[0_0_10px_rgba(96,165,250,0.5)]"></span>
-            Actividad Reciente
+            {isStudent ? 'Próximas Tareas' : 'Actividad Reciente'}
           </h2>
           <div className="space-y-6 relative z-10">
-            <ActivityItem text="Juan Pérez entregó Tarea 1" time="Hace 5 min" active />
-            <ActivityItem text="Nuevo archivo subido: 'Syllabus.pdf'" time="Hace 1 hora" />
-            <ActivityItem text="Reunión de profesores programada" time="Hace 3 horas" />
-            <ActivityItem text="Evaluación Módulo 2 activada" time="Ayer" />
+            {isStudent ? (
+              <>
+                <ActivityItem text="Examen de Cloud Computing" time="Mañana, 10:00 AM" active />
+                <ActivityItem text="Entrega de Ensayo Liderazgo" time="Viernes, 23:59" />
+                <ActivityItem text="Foro Semana 4 Machine Learning" time="Próximo Lunes" />
+              </>
+            ) : (
+              <>
+                <ActivityItem text="Juan Pérez entregó Tarea 1" time="Hace 5 min" active />
+                <ActivityItem text="Nuevo archivo subido: 'Syllabus.pdf'" time="Hace 1 hora" />
+                <ActivityItem text="Reunión de profesores programada" time="Hace 3 horas" />
+                <ActivityItem text="Evaluación Módulo 2 activada" time="Ayer" />
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -93,7 +132,7 @@ function KPICard({ title, value, icon, trend, neutral = false, color = "blue" }:
   );
 }
 
-function CourseRow({ title, students, progress }: { title: string, students: number, progress: number }) {
+function CourseRow({ title, text_secondary, progress }: { title: string, text_secondary: string, progress: number }) {
   return (
     <div className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-black/20 hover:border-emerald-500/40 hover:bg-black/40 transition-all group cursor-pointer">
       <div className="flex items-center space-x-4">
@@ -102,7 +141,7 @@ function CourseRow({ title, students, progress }: { title: string, students: num
         </div>
         <div>
           <h4 className="text-sm font-semibold text-gray-200 group-hover:text-white transition-colors">{title}</h4>
-          <p className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">{students} estudiantes inscritos</p>
+          <p className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">{text_secondary}</p>
         </div>
       </div>
       <div className="w-32 hidden sm:block">

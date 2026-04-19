@@ -43,11 +43,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto relative z-10">
           <NavItem to="/" icon={<LayoutDashboard size={20} />} label="Dashboard" active={location.pathname === "/"} />
           <NavItem to="/courses" icon={<BookOpen size={20} />} label="Cursos" active={location.pathname === "/courses"} />
-          <NavItem to="/users" icon={<Users size={20} />} label="Usuarios" active={location.pathname === "/users"} />
+          
+          {(user?.role === 'SUPER_ADMIN' || user?.role === 'INSTITUTION_ADMIN') && (
+            <NavItem to="/users" icon={<Users size={20} />} label="Usuarios" active={location.pathname === "/users"} />
+          )}
+
           <NavItem to="/files" icon={<FolderOpen size={20} />} label="Archivos" active={location.pathname === "/files"} />
-          <div className="pt-6 mt-6 border-t border-white/5">
-            <NavItem to="/settings" icon={<Settings size={20} />} label="Configuración" active={location.pathname === "/settings"} />
-          </div>
+          
+          {(user?.role === 'SUPER_ADMIN' || user?.role === 'INSTITUTION_ADMIN') && (
+            <div className="pt-6 mt-6 border-t border-white/5">
+              <NavItem to="/settings" icon={<Settings size={20} />} label="Configuración" active={location.pathname === "/settings"} />
+            </div>
+          )}
         </nav>
         
         <div className="p-4 border-t border-white/5 flex items-center space-x-3 cursor-pointer hover:bg-white/10 rounded-md mx-2 mb-2 transition-colors relative z-10">
