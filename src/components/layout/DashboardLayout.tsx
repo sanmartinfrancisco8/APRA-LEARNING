@@ -67,8 +67,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               {user?.role === 'SUPER_ADMIN' || user?.role === 'INSTITUTION_ADMIN' ? 'Administrador' : user?.role === 'TEACHER' ? 'Docente' : 'Estudiante'}
             </p>
           </div>
-          <button onClick={handleLogout} className="p-1 hover:bg-red-500/20 rounded-md group transition-colors">
+          <button onClick={handleLogout} title="Cerrar sesión" className="p-1.5 hover:bg-red-500/20 rounded-md group transition-colors relative flex items-center justify-center">
             <LogOut size={16} className="text-gray-500 group-hover:text-red-400 shrink-0 transition-colors" />
+            <span className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-slate-900 border border-white/10 text-[11px] font-medium text-gray-200 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+              Salir
+            </span>
           </button>
         </div>
       </aside>

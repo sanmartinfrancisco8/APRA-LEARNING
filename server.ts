@@ -93,6 +93,31 @@ async function startServer() {
     }
   });
 
+  // Example: Files Module
+  app.get('/api/folders', async (req, res) => {
+    try {
+      const folders = await prisma.folder.findMany({
+        where: { parentId: null }, // Only root folders for now
+        include: { _count: { select: { files: true, children: true } } }
+      });
+      res.json(folders);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch folders' });
+    }
+  });
+
+  app.get('/api/files', async (req, res) => {
+    try {
+      const files = await prisma.file.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 10
+      });
+      res.json(files);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch files' });
+    }
+  });
+
   // ---------------------------------------------------------------------------
   // VITE MIDDLEWARE (Frontend Delivery)
   // ---------------------------------------------------------------------------
