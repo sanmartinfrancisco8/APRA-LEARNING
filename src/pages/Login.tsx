@@ -103,9 +103,8 @@ export function Login() {
               </button>
             </div>
             
-            <div className="text-center mt-4">
-               <p className="text-xs text-gray-500">Credenciales de prueba:</p>
-               <p className="text-xs text-gray-400">admin@apra.edu.com / andrea@apra.edu.com</p>
+            <div className="text-center mt-6">
+               <p className="text-xs text-emerald-500/80 font-medium tracking-wide">Desarrollado por APRA Learning Systems</p>
             </div>
           </form>
         </div>

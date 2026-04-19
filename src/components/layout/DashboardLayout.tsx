@@ -10,7 +10,13 @@ import {
   Bell,
   Search,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Award,
+  Video,
+  Megaphone,
+  GraduationCap,
+  MessageSquare,
+  Home
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -41,8 +47,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
         
         <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto relative z-10">
-          <NavItem to="/" icon={<LayoutDashboard size={20} />} label="Dashboard" active={location.pathname === "/"} />
+          <NavItem to="/" icon={<Home size={20} />} label="Home" active={location.pathname === "/"} />
+          <NavItem to="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" active={location.pathname === "/dashboard"} />
           <NavItem to="/courses" icon={<BookOpen size={20} />} label="Cursos" active={location.pathname === "/courses"} />
+          <NavItem to="/syllabus" icon={<GraduationCap size={20} />} label="Programa del Curso" active={location.pathname === "/syllabus"} />
+          <NavItem to="/grades" icon={<Award size={20} />} label="Calificaciones" active={location.pathname === "/grades"} />
+          <NavItem to="/virtual-room" icon={<Video size={20} />} label="Sala Virtual" active={location.pathname === "/virtual-room"} />
+          <NavItem to="/announcements" icon={<Megaphone size={20} />} label="Anuncios" active={location.pathname === "/announcements"} />
+          <NavItem to="/messages" icon={<MessageSquare size={20} />} label="Mensajes" active={location.pathname === "/messages"} />
           
           {(user?.role === 'SUPER_ADMIN' || user?.role === 'INSTITUTION_ADMIN') && (
             <NavItem to="/users" icon={<Users size={20} />} label="Usuarios" active={location.pathname === "/users"} />
