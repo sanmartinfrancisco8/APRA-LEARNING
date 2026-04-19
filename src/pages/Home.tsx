@@ -9,13 +9,13 @@ export function Home() {
   return (
     <div className="relative w-full h-[calc(100vh-8rem)] min-h-[500px] rounded-2xl overflow-hidden shadow-2xl flex items-center animate-in fade-in duration-700">
       {/* 
-        El fondo utiliza un fallback de neón espacial/educativo desde Unsplash 
-        Para usar tu imagen exacta adjunta, simplemente ve a tu carpeta 'public' 
-        y sube el archivo con el nombre 'bg-education.png' 
+        El fondo utiliza un fallback de ola digital azul desde Unsplash 
+        Para usar la imagen de ondas de puntos (partículas) que solicitaste, 
+        por favor arrastra tu imagen a la carpeta 'public' en el explorador de archivos y nómbrala 'bg-wave.png'
       */}
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: `url('/bg-education.png'), url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop')` }}
+        style={{ backgroundImage: `url('/bg-wave.png'), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2064&auto=format&fit=crop')` }}
       />
       {/* Overlay de gradiente para hacer que el texto resalte correctamente y mantener el estilo neón azul */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950/95 via-blue-900/80 to-transparent z-10" />
