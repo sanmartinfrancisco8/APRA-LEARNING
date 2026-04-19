@@ -1,6 +1,22 @@
-import { Search, UserPlus, Shield, User } from "lucide-react";
+import { Search, UserPlus, Shield, User as UserIcon, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function Users() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(data => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to load users", err);
+        setLoading(false);
+      });
+  }, []);
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -41,10 +57,30 @@ export function Users() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              <UserRow name="Francisco SM" email="admin@apra.edu.com" role="Administrador" status="Activo" date="Ahora" />
-              <UserRow name="Andrea Gómez" email="andrea@apra.edu.com" role="Docente" status="Activo" date="Hace 2 horas" />
-              <UserRow name="Carlos Ruiz" email="carlos.r@student.apra.com" role="Estudiante" status="Activo" date="Ayer" />
-              <UserRow name="María López" email="maria.l@student.apra.com" role="Estudiante" status="Inactivo" date="Hace 5 días" />
+              {loading ? (
+                 <tr>
+                   <td colSpan={4} className="py-12 text-center text-gray-500">
+                     <Loader2 className="animate-spin mx-auto mb-2 text-blue-500" size={24} />
+                     Cargando usuarios...
+                   </td>
+                 </tr>
+              ) : (
+                users.map(user => {
+                  const roleName = user.roles?.[0]?.role?.name || 'Desconocido';
+                  const roleDisplay = roleName === 'SUPER_ADMIN' || roleName === 'INSTITUTION_ADMIN' ? 'Administrador' : roleName === 'TEACHER' ? 'Docente' : 'Estudiante';
+                  const dateStr = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Nunca';
+                  return (
+                    <UserRow 
+                      key={user.id} 
+                      name={`${user.firstName} ${user.lastName}`} 
+                      email={user.email} 
+                      role={roleDisplay} 
+                      status={user.isActive ? "Activo" : "Inactivo"} 
+                      date={dateStr} 
+                    />
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -59,7 +95,7 @@ function UserRow({ name, email, role, status, date }: any) {
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full border border-white/10 bg-black/40 flex items-center justify-center text-gray-300 group-hover:text-blue-400 group-hover:border-blue-400/50 transition-colors">
-            <User size={16} />
+            <UserIcon size={16} />
           </div>
           <div>
             <div className="font-medium text-gray-200">{name}</div>

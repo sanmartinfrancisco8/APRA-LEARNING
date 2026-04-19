@@ -26,22 +26,71 @@ async function startServer() {
   // Example: Users Module
   app.get('/api/users', async (req, res) => {
     try {
-        const users = await prisma.user.findMany();
+        const users = await prisma.user.findMany({
+          include: {
+            roles: {
+              include: { role: true }
+            }
+          },
+          orderBy: { createdAt: 'desc' }
+        });
         res.json(users);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch users' });
     }
   });
-  app.post('/api/auth/login', (req, res) => {
-    res.json({ token: 'mock-jwt-token', user: { id: 1, role: 'ADMIN' } });
+
+  app.post('/api/auth/login', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email },
+        include: {
+          roles: {
+            include: { role: true }
+          }
+        }
+      });
+
+      if (!user) {
+        return res.status(401).json({ error: 'Usuario no encontrado.' });
+      }
+      
+      // In a real app we'd bcrypt.compare(password, user.passwordHash)
+      // For this MVP prototype we will bypass password checking and just approve
+
+      const roleName = user.roles?.[0]?.role?.name || 'STUDENT';
+
+      res.json({
+        token: 'mock-jwt-token-7389127391',
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: roleName
+        }
+      });
+    } catch (e) {
+      res.status(500).json({ error: 'Error del servidor' });
+    }
   });
 
-  // Example: Courses Module Stub
-  app.get('/api/courses', (req, res) => {
-    res.json([
-      { id: '1', title: 'Enterprise Software Architecture', students: 120 },
-      { id: '2', title: 'Advanced Fullstack Development', students: 85 }
-    ]);
+  // Example: Courses Module
+  app.get('/api/courses', async (req, res) => {
+    try {
+        const courses = await prisma.course.findMany({
+          orderBy: { createdAt: 'asc' },
+          include: {
+            _count: {
+              select: { sections: true, modules: true }
+            }
+          }
+        });
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch courses' });
+    }
   });
 
   // ---------------------------------------------------------------------------

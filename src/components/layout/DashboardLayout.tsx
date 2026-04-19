@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/auth";
 import {
   LayoutDashboard,
   BookOpen,
@@ -15,6 +16,13 @@ import { cn } from "../../lib/utils";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-blue-950 via-teal-900 to-emerald-800 text-gray-200 overflow-hidden font-sans selection:bg-emerald-500/30">
@@ -44,13 +52,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         
         <div className="p-4 border-t border-white/5 flex items-center space-x-3 cursor-pointer hover:bg-white/10 rounded-md mx-2 mb-2 transition-colors relative z-10">
           <div className="w-10 h-10 rounded-full bg-blue-950 border border-blue-800/50 flex items-center justify-center text-sm font-semibold text-blue-200 shrink-0">
-            FS
+            {user?.firstName?.charAt(0) || ''}{user?.lastName?.charAt(0) || ''}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium text-gray-200 truncate">Francisco SM</p>
-            <p className="text-[11px] text-blue-400 truncate">Administrador</p>
+            <p className="text-sm font-medium text-gray-200 truncate">{user?.firstName} {user?.lastName}</p>
+            <p className="text-[11px] text-blue-400 truncate">
+              {user?.role === 'SUPER_ADMIN' || user?.role === 'INSTITUTION_ADMIN' ? 'Administrador' : user?.role === 'TEACHER' ? 'Docente' : 'Estudiante'}
+            </p>
           </div>
-          <LogOut size={16} className="text-gray-500 shrink-0" />
+          <button onClick={handleLogout} className="p-1 hover:bg-red-500/20 rounded-md group transition-colors">
+            <LogOut size={16} className="text-gray-500 group-hover:text-red-400 shrink-0 transition-colors" />
+          </button>
         </div>
       </aside>
 
