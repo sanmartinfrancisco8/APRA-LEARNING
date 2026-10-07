@@ -6,13 +6,13 @@ export function Files() {
   const [folders, setFolders] = useState<any[]>([]);
   const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const isStudent = user?.role === 'STUDENT';
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/folders').then(res => res.json()),
-      fetch('/api/files').then(res => res.json())
+      fetch('/api/folders', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json()),
+      fetch('/api/files', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json())
     ])
     .then(([foldersData, filesData]) => {
       setFolders(foldersData);
@@ -23,7 +23,7 @@ export function Files() {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [token]);
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';

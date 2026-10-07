@@ -1,12 +1,14 @@
 import { Search, UserPlus, Shield, User as UserIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useAuthStore } from '../store/auth';
 
 export function Users() {
+  const token = useAuthStore(s => s.token);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/users')
+    fetch('/api/users', { headers: { Authorization: `Bearer ${token}` } })
       .then(res => res.json())
       .then(data => {
         setUsers(data);
@@ -16,7 +18,7 @@ export function Users() {
         console.error("Failed to load users", err);
         setLoading(false);
       });
-  }, []);
+  }, [token]);
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
