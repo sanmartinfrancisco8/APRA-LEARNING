@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/auth";
 
 export function Courses() {
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const isStudent = user?.role === 'STUDENT';
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/courses')
+    fetch('/api/courses', { headers: { Authorization: `Bearer ${token}` } })
       .then(res => res.json())
       .then(data => {
         setCourses(data);
@@ -19,7 +19,7 @@ export function Courses() {
         console.error("Failed to load courses", err);
         setLoading(false);
       });
-  }, []);
+  }, [token]);
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -65,8 +65,8 @@ export function Courses() {
               <CourseCard 
                 key={course.id} 
                 title={course.title} 
-                students={course._count?.sections * 15 || Math.floor(Math.random() * 50) + 10} 
-                hours={course._count?.modules * 5 || Math.floor(Math.random() * 20) + 10}
+                students={course._count?.sections ?? 0} 
+                hours={course._count?.modules ?? 0}
                 isStudent={isStudent}
               />
             ))
